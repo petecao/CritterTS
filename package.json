@@ -2,7 +2,8 @@
   "name": "CritterworldTS",
   "version": "1.0.0",
   "description": "A TypeScript version of CS 2112's CritterWorld",
-  "main": "./src/main/ParseAndMutateApp.js",
+  "main": "./lib/main/ParseAndMutateApp.js",
+  
   "repository": "https://github.com/petecao/CritterTS",
   "author": "Peter Cao",
   "license": "MIT",
@@ -16,8 +17,14 @@
     "nodemon": "^2.0.20",
     "path": "^0.12.7"
   },
+  "bin": {
+    "critterparse": "./lib/main/ParseAndMutateApp.js"
+  },
   "scripts": {
     "build": "tsc -p .",
-    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/main/ParseAndMutateApp.ts"
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/main/ParseAndMutateApp.ts",
+    "create": "yarn build && yarn start",
+    "local": "sudo npm i -g && critterparse"
   }
+  
 }

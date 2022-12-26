@@ -1,3 +1,5 @@
+#!/usr/bin/env ts-node-script
+
 const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
