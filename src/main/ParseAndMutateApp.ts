@@ -9,14 +9,7 @@ const fs = require('fs');
 const readline = require('readline');
 const events = require('events');
 
-
-
 clear();
-// console.log(
-//   chalk.red(
-//     figlet.textSync('critterworld-parse', { horizontalLayout: 'full' })
-//   )
-// );
 
 program
   .version('0.0.1')
