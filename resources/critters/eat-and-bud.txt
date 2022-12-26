@@ -1,0 +1,33 @@
+// Write a critter program for a critter that sits in one place until food appears within
+// one hex of it. It then eats the food and moves to where the food was. While sitting,
+// whenever it gets within 100 of its maximum energy, it tries to bud a child.
+// Remember that if no rule is true, then the critter just sits and waits
+// First check nearby the critter (food if nearby[x] < -1)
+// If there is food, then if it is from 1-3 direction, set 7 to 0-2 (turn right)
+// If from 4-5, set 7 to 0 (5) or -1 (4) (turn left)
+// At start of move, if mem[7] = 0, start checking nearby[0] and go from there
+// If mem[7] > 0, turn right some more, decrement mem[7] by 1
+// If mem[7] < 0, turn left some more, increment mem[7] by 1
+// If nearby[0] has food, then eat, set mem[8] to 1
+// If mem[8] = 1 (after checking that mem[7] != 0), go forward, set mem[8] = 0
+// If 500 * SIZE - ENERGY <= 100, bud if no food nearby
+// memsize: 11
+// size: 4
+// energy: 1000
+mem[7] > 0 --> mem[7] := mem[7] - 1
+	       right;
+mem[7] < 0 --> mem[7] := mem[7] + 1
+	       left;
+mem[8] = 1 --> mem[8] := 0
+	       forward;
+nearby[0] < -1 --> mem[8] := 1
+		   eat;
+nearby[1] < -1 --> right;
+nearby[5] < -1 --> left;
+nearby[2] < -1 --> mem[7] := 1
+		   right;
+nearby[4] < -1 --> mem[7] := -1
+		   left;
+nearby[3] < -1 --> mem[7] := 2
+		   right;
+500 * SIZE - ENERGY <= 100 --> bud;

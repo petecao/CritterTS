@@ -1,0 +1,46 @@
+// Write a critter program for a critter that walks in a growing hexagon spiral that, on an
+// infinite world without any rocks, would eventually hit every hex. When it comes to
+// food, it should eat the food. (Hint: the critter will need additional memory slots.)
+// we need to track the distance of the sides, how far we are along one
+// and also the orientation around the hexagon being drawn
+// start by going forward, turn left twice
+// go forward 1 turn left 4 times
+// go forward 2 turn left
+// forward 1 turn left
+// go forward 2 turn left 4 times
+// go forward 3 turn left
+// forward 2 turn left
+// go forward 3 turn left 4 times
+// mem[7] = length of step
+// mem[8] = loop times
+// mem[9] = turn needed
+// mem[10] = where we are in the step
+species: spinny-boi
+memsize: 11
+defense: -1
+offense: -1
+size: 3
+energy: 200
+posture: 100
+mem[7] = 0 and mem[10] = 0 --> mem[10] := 1
+			       mem[9] := 2
+			       forward;
+{mem[8] < 4 or mem[8] = 5} and mem[10] = mem[7] --> mem[8] := mem[8] + 1
+				    		    mem[9] := 1
+				    	  	    mem[10] := 0;
+mem[8] = 4 and mem[10] = mem[7] + 1 --> mem[8] := mem[8] + 1
+				        mem[9] := 1
+				        mem[10] := 0;
+
+mem[9] != 0 --> mem[9] := mem[9] - 1
+		left;
+mem[9] = 0 and nearby[0] < -1 --> eat;
+mem[8] = 6 --> mem[7] := mem[7] + 1
+	       mem[8] := 0
+	       mem[10] := 0;
+mem[7] = 0 and mem[10] != 0 and mem[9] = 0 --> mem[7] := 1
+					       mem[10] := 0;
+mem[8] = 4 and mem[10] < mem[7] + 1 --> mem[10] := mem[10] + 1
+                                        forward;
+{mem[8] < 4 or mem[8] = 5} and mem[10] < mem[7] --> mem[10] := mem[10] + 1
+                                                    forward;
