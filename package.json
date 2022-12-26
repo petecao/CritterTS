@@ -1,0 +1,21 @@
+{
+  "name": "CritterworldTS",
+  "version": "1.0.0",
+  "description": "A TypeScript version of CS 2112's CritterWorld",
+  "main": "./src/main/ParseAndMutateApp.js",
+  "repository": "https://github.com/petecao/CritterTS",
+  "author": "Peter Cao",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "@types/node": "^18.11.17",
+    "chalk": "4.1.2",
+    "clear": "^0.1.0",
+    "commander": "^9.4.1",
+    "figlet": "^1.5.2",
+    "path": "^0.12.7"
+  },
+  "scripts": {
+    "build": "tsc -p ."
+  }
+}
