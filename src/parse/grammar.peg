@@ -1,0 +1,18 @@
+program := rules=rule+ $
+rule := _ cond=condition _ '-->' _ com=command ';' _ '\n'* _
+command := up_or_act=update_or_action | {updates=update* up_or_act=update_or_action}
+update_or_action := update | action
+update := {{'mem' _ '\[' _ index=expr _ '\]'} | memsugar=memsugar} _ ':=' _ arg=expr _
+action := type={'wait' | 'forward' | 'backward' | 'left' | 'right' | 'eat' | 'attack' | 'grow' | 'bud' | 'mate' | 'serve' _ '\[' ind=expr '\]'}
+condition := conj=conjunction _ {' or ' _ rest=conjunction _}*
+conjunction := rel=relation _ {' and ' _  rest=relation _}*
+relation := {left=expr _ rel_op=rel _ right=expr} | {'\{' _ cond=condition _ '\}'}
+rel := operation={'<' | '<=' | '=' | '\!=' | '>=' | '>'}
+expr := first=term _ {' ' op=addop ' ' _ rest=term _}*
+term := first=factor _ {' ' op=mulop ' ' _ rest=factor _}*
+factor := num='[0-9]+' | {type='mem' _ '\[' _ index=expr _ '\]'} | {'\(' _ expr=expr _ '\)'} | {'-' _ neg_expr=expr} | sensor=sensor | memsugar=memsugar
+memsugar :=  mem_type={'MEMSIZE' | 'DEFENSE' | 'OFFENSE' | 'SIZE' | 'ENERGY' | 'PASS' | 'POSTURE'}
+sensor := near='nearby ' _ expr=expr | ahead='ahead ' _ expr=expr | random='random ' _ expr=expr | smell='smell'
+addop := '\+' | '-'
+mulop := '\*' | '/' | 'mod'
+_ := {'//' !'\n'* '\n'} | {'[ \t\r\n]'*} 

@@ -17,7 +17,7 @@
     "types": [
       "node"
     ],
-    "outDir": "lib",
+    "outDir": "build",
     "rootDir": "src",
   },
   "include": [
