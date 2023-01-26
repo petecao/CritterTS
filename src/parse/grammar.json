@@ -61,30 +61,37 @@
 
         "rule": [[ "condition RARROW command SEMI",   "$$ = {type: 'rule', condition: $1, command: $3};" ]],
 
-        "command": [["action",         "$$ = {type: 'command', updates: [], action: {type: 'action', class: $1}}"],
-                    ["updates action", "$$ = {type: 'command', updates: $1, action: {type: 'action', class: $2}}"],
-                    ["updates",        "$$ = {type: 'command', updates: $1}"]],
+        "command": [[ "action",         "$$ = {type: 'command', updates: [], action: {type: 'action', class: $1}}" ],
+                    [ "updates action", "$$ = {type: 'command', updates: $1, action: {type: 'action', class: $2}}" ],
+                    [ "updates",        "$$ = {type: 'command', updates: $1}" ]],
 
         "updates": [[ "updates update",   "$$ = $1.concat($2);" ],
                     [ "update",           "$$ = [$1];" ]],
   
 
-        "update": [[]],
+        "update": [["memexpr ASSIGN expr", "$$ {type: 'update', memexpr: $1, expr: $3}"]],
 
-        "action": [["WAIT", "$$ = {type: 'wait'}"],
-                   ["FORWARD", "$$ = {type: 'forward'}"],
-                   ["BACKWARD", "$$ = {type: 'backward'}"],
-                   ["LEFT", "$$ = {type: 'left'}"],
-                   ["RIGHT", "$$ = {type: 'right'}"],
-                   ["EAT", "$$ = {type: 'eat'}"],
-                   ["ATTACK", "$$ = {type: 'attack'}"],
-                   ["GROW", "$$ = {type: 'grow'}"],
-                   ["BUD", "$$ = {type: 'bud'}"],
-                   ["MATE", "$$ = {type: 'mate'}"],
-                   ["SERVE LBRACKET expr RBRACKET", "$$ = {type: 'serve', expr: $3}"]],
+        "memexpr": [[ "memsugar",                   "$$ = {type: 'memsugar', val: $1}" ],
+                    [ "MEM LBRACKET expr RBRACKET", "$$ = {type: 'mem', val: $3}"]],
+
+        "action": [[ "WAIT",                         "$$ = {type: 'wait'}" ],
+                   [ "FORWARD",                      "$$ = {type: 'forward'}" ],
+                   [ "BACKWARD",                     "$$ = {type: 'backward'}" ],
+                   [ "LEFT",                         "$$ = {type: 'left'}" ],
+                   [ "RIGHT",                        "$$ = {type: 'right'}" ],
+                   [ "EAT",                          "$$ = {type: 'eat'}" ],
+                   [ "ATTACK",                       "$$ = {type: 'attack'}" ],
+                   [ "GROW",                         "$$ = {type: 'grow'}" ],
+                   [ "BUD",                          "$$ = {type: 'bud'}" ],
+                   [ "MATE",                         "$$ = {type: 'mate'}" ],
+                   [ "SERVE LBRACKET expr RBRACKET", "$$ = {type: 'serve', expr: $3}" ]],
                 
 
-        "conjunctions": [[]],
+        "condition": [[]],
+
+        "conjunction": [[]],
+
+        "relation": [[]],
 
         "e" :[[ "e + e",   "$$ = $1 + $3;" ],
               [ "e - e",   "$$ = $1 - $3;" ],
@@ -96,6 +103,21 @@
               [ "NUMBER",  "$$ = Number(yytext);" ],
               [ "E",       "$$ = Math.E;" ],
               [ "PI",      "$$ = Math.PI;" ]],
+
+        "expr": [[]],
+
+        "term": [[]],
+
+        "factor": [[ "memexpr",            "$$ = {type: 'factor', class: 'memexpr', expr: $1}"],
+                   [ "LPAREN expr RPAREN", "$$ = {type: 'factor', class: 'expr', expr: $2}"],
+                   [ "MINUS expr",         "$$ = {type: 'factor', class: 'negexpr', expr: $2}"],
+                   [ "sensor",             "$$ = {type: 'factor', class: 'sensor', expr: $1}"],
+                   [ "NUMBER",             "$$ = {type: 'factor', class: 'number', expr: Number(yytext)}"]],
+
+        "sensor": [[ "NEARBY LBRACKET expr RBRACKET", "$$ = {type: 'nearby', expr: $3}" ],
+                   [ "AHEAD LBRACKET expr RBRACKET",  "$$ = {type: 'ahead', expr: $3}" ],
+                   [ "RANDOM LBRACKET expr RBRACKET", "$$ = {type: 'random', expr: $3}" ],
+                   [ "SMELL",                         "$$ = {type: 'smell'}" ]],
 
         "memsugar": [[ "MEMSIZE", "$$ = 'MEMSIZE';" ],
                      [ "DEFENSE", "$$ = 'DEFENSE';" ],

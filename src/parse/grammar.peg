@@ -12,7 +12,7 @@ expr := first=term _ {' ' op=addop ' ' _ rest=term _}*
 term := first=factor _ {' ' op=mulop ' ' _ rest=factor _}*
 factor := num='[0-9]+' | {type='mem' _ '\[' _ index=expr _ '\]'} | {'\(' _ expr=expr _ '\)'} | {'-' _ neg_expr=expr} | sensor=sensor | memsugar=memsugar
 memsugar :=  mem_type={'MEMSIZE' | 'DEFENSE' | 'OFFENSE' | 'SIZE' | 'ENERGY' | 'PASS' | 'POSTURE'}
-sensor := near='nearby ' _ expr=expr | ahead='ahead ' _ expr=expr | random='random ' _ expr=expr | smell='smell'
+sensor := near='nearby ' _ '\[' ind=expr '\]' | ahead='ahead ' _ '\[' ind=expr '\]' | random='random ' _ '\[' ind=expr '\]' | smell='smell'
 addop := '\+' | '-'
 mulop := '\*' | '/' | 'mod'
 _ := {'//' !'\n'* '\n'} | {'[ \t\r\n]'*} 
