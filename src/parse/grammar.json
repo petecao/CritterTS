@@ -1,0 +1,122 @@
+{
+    "lex": {
+        "rules": [
+           ["\\s+",                    "/* skip whitespace */"],
+           ["//.*\n",                  "/* skip comments */"],
+           ["[0-9]+\\b",               "return 'NUMBER';"],
+           ["\\*",                     "return 'TIMES';"],
+           ["\\/",                     "return 'DIV';"],
+           ["mod",                     "return 'MOD';"],
+           ["-",                       "return 'MINUS';"],
+           ["\\+",                     "return 'PLUS';"],
+           ["\\(",                     "return 'LPAREN';"],
+           ["\\)",                     "return 'RPAREN';"],
+           ["\\[",                     "return 'LBRACKET';"],
+           ["\\]",                     "return 'RBRACKET';"],
+           ["\\{",                     "return 'LBRACE';"],
+           ["\\}",                     "return 'RBRACE';"],
+           ["<",                       "return 'LT';"],
+           ["<=",                      "return 'LEQ';"],
+           ["=",                       "return 'EQ';"],
+           [">=",                      "return 'GEQ';"],
+           [">",                       "return 'GT';"],
+           ["!=",                      "return 'NEQ';"],
+           ["mem\\b",                  "return 'MEM';"],
+           [";",                       "return 'SEMI';"],
+           [":=",                      "return 'ASSIGN';"],
+           ["-->",                     "return 'RARROW';"],
+           ["MEMSIZE\\b",              "return 'MEMSIZE';"],
+           ["DEFENSE\\b",              "return 'DEFENSE';"],
+           ["OFFENSE\\b",              "return 'OFFENSE';"],
+           ["SIZE\\b",                 "return 'SIZE';"],
+           ["ENERGY\\b",               "return 'ENERGY';"],
+           ["PASS\\b",                 "return 'PASS';"],
+           ["POSTURE\\b",              "return 'POSTURE';"],
+           ["wait\\b",                 "return 'WAIT';"],
+           ["forward\\b",              "return 'FORWARD';"],
+           ["backward\\b",             "return 'BACKWARD';"],
+           ["left\\b",                 "return 'LEFT';"],
+           ["right\\b",                "return 'RIGHT';"],
+           ["eat\\b",                  "return 'EAT';"],
+           ["attack\\b",               "return 'ATTACK';"],
+           ["grow\\b",                 "return 'GROW';"],
+           ["bud\\b",                  "return 'BUD';"],
+           ["mate\\b",                 "return 'MATE';"],
+           ["serve\\b",                "return 'SERVE';"],
+           ["nearby\\b",               "return 'NEARBY';"],
+           ["ahead\\b",                "return 'AHEAD';"],
+           ["random\\b",               "return 'RANDOM';"],
+           ["smell\\b",                "return 'SMELL';"],
+           ["$",                       "return 'EOF';"]
+        ]
+    },
+
+    "bnf": {
+        "start":  [[ "program EOF",   "return $1;"]],
+
+        "program": [[ "rules",   "$$ = {type: 'program', rules: $1};"  ]],
+
+        "rules": [[ "rules rule",   "$$ = $1.concat($2);" ],
+                  [ "rule",         "$$ = [$1];" ]],
+
+        "rule": [[ "condition RARROW command SEMI",   "$$ = {type: 'rule', condition: $1, command: $3};" ]],
+
+        "command": [["action",         "$$ = {type: 'command', updates: [], action: {type: 'action', class: $1}}"],
+                    ["updates action", "$$ = {type: 'command', updates: $1, action: {type: 'action', class: $2}}"],
+                    ["updates",        "$$ = {type: 'command', updates: $1}"]],
+
+        "updates": [[ "updates update",   "$$ = $1.concat($2);" ],
+                    [ "update",           "$$ = [$1];" ]],
+  
+
+        "update": [[]],
+
+        "action": [["WAIT", "$$ = {type: 'wait'}"],
+                   ["FORWARD", "$$ = {type: 'forward'}"],
+                   ["BACKWARD", "$$ = {type: 'backward'}"],
+                   ["LEFT", "$$ = {type: 'left'}"],
+                   ["RIGHT", "$$ = {type: 'right'}"],
+                   ["EAT", "$$ = {type: 'eat'}"],
+                   ["ATTACK", "$$ = {type: 'attack'}"],
+                   ["GROW", "$$ = {type: 'grow'}"],
+                   ["BUD", "$$ = {type: 'bud'}"],
+                   ["MATE", "$$ = {type: 'mate'}"],
+                   ["SERVE LBRACKET expr RBRACKET", "$$ = {type: 'serve', expr: $3}"]],
+                
+
+        "conjunctions": [[]],
+
+        "e" :[[ "e + e",   "$$ = $1 + $3;" ],
+              [ "e - e",   "$$ = $1 - $3;" ],
+              [ "e * e",   "$$ = $1 * $3;" ],
+              [ "e / e",   "$$ = $1 / $3;" ],
+              [ "e ^ e",   "$$ = Math.pow($1, $3);" ],
+              [ "- e",     "$$ = -$2;", {"prec": "UMINUS"} ],
+              [ "( e )",   "$$ = $2;" ],
+              [ "NUMBER",  "$$ = Number(yytext);" ],
+              [ "E",       "$$ = Math.E;" ],
+              [ "PI",      "$$ = Math.PI;" ]],
+
+        "memsugar": [[ "MEMSIZE", "$$ = 'MEMSIZE';" ],
+                     [ "DEFENSE", "$$ = 'DEFENSE';" ],
+                     [ "OFFENSE", "$$ = 'OFFENSE';" ],
+                     [ "SIZE",    "$$ = 'SIZE';" ],
+                     [ "ENERGY",  "$$ = 'ENERGY';" ],
+                     [ "PASS",    "$$ = 'PASS';" ],
+                     [ "POSTURE", "$$ = 'POSTURE';" ]],
+
+        "rel": [[ "LT",    "$$ = 'LT';" ],
+                [ "LEQ",   "$$ = 'LEQ';" ],
+                [ "EQ",    "$$ = 'EQ';" ],
+                [ "GEQ",   "$$ = 'GEQ';" ],
+                [ "GT",    "$$ = 'GT';"],
+                [ "NEQ",   "$$ = 'NEQ';" ]],
+
+        "addop": [[ "ADD", "$$ = 'ADD';" ],
+                  [ "SUB", "$$ = 'SUB';" ]],
+
+        "mulop": [[ "TIMES", "$$ = 'TIMES';" ],
+                  [ "DIV",   "$$ = 'DIV';" ],
+                  [ "MOD",   "$$ = 'MOD';" ]]
+    }
+}
