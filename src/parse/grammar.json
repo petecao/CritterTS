@@ -56,68 +56,60 @@
 
         "program": [[ "rules",   "$$ = {type: 'program', rules: $1};"  ]],
 
-        "rules": [[ "rules rule",   "$$ = $1.concat($2);" ],
+        "rules": [[ "rules rule",   "$$ = $1.push($2);" ],
                   [ "rule",         "$$ = [$1];" ]],
 
-        "rule": [[ "condition RARROW command SEMI",   "$$ = {type: 'rule', condition: $1, command: $3};" ]],
+        "rule": [[ "condition RARROW command SEMI",   "$$ = {type: 'rule', condition: {type: 'condition', conjunctions: $1}, command: $3};" ]],
 
-        "command": [[ "action",         "$$ = {type: 'command', updates: [], action: {type: 'action', class: $1}}" ],
-                    [ "updates action", "$$ = {type: 'command', updates: $1, action: {type: 'action', class: $2}}" ],
-                    [ "updates",        "$$ = {type: 'command', updates: $1}" ]],
+        "command": [[ "action",         "$$ = {type: 'command', updates: [], action: {type: 'action', class: $1}};" ],
+                    [ "updates action", "$$ = {type: 'command', updates: $1, action: {type: 'action', class: $2}};" ],
+                    [ "updates",        "$$ = {type: 'command', updates: $1};" ]],
 
-        "updates": [[ "updates update",   "$$ = $1.concat($2);" ],
+        "updates": [[ "updates update",   "$$ = $1.push($2);" ],
                     [ "update",           "$$ = [$1];" ]],
   
 
-        "update": [["memexpr ASSIGN expr", "$$ {type: 'update', memexpr: $1, expr: $3}"]],
+        "update": [["memexpr ASSIGN expr", "$$ = {type: 'update', memexpr: $1, expr: $3};"]],
 
-        "memexpr": [[ "memsugar",                   "$$ = {type: 'memsugar', val: $1}" ],
-                    [ "MEM LBRACKET expr RBRACKET", "$$ = {type: 'mem', val: $3}"]],
+        "memexpr": [[ "memsugar",                   "$$ = {type: 'memsugar', val: $1};" ],
+                    [ "MEM LBRACKET expr RBRACKET", "$$ = {type: 'mem', val: $3};"]],
 
-        "action": [[ "WAIT",                         "$$ = {type: 'wait'}" ],
-                   [ "FORWARD",                      "$$ = {type: 'forward'}" ],
-                   [ "BACKWARD",                     "$$ = {type: 'backward'}" ],
-                   [ "LEFT",                         "$$ = {type: 'left'}" ],
-                   [ "RIGHT",                        "$$ = {type: 'right'}" ],
-                   [ "EAT",                          "$$ = {type: 'eat'}" ],
-                   [ "ATTACK",                       "$$ = {type: 'attack'}" ],
-                   [ "GROW",                         "$$ = {type: 'grow'}" ],
-                   [ "BUD",                          "$$ = {type: 'bud'}" ],
-                   [ "MATE",                         "$$ = {type: 'mate'}" ],
-                   [ "SERVE LBRACKET expr RBRACKET", "$$ = {type: 'serve', expr: $3}" ]],
+        "action": [[ "WAIT",                         "$$ = {type: 'wait'};" ],
+                   [ "FORWARD",                      "$$ = {type: 'forward'};" ],
+                   [ "BACKWARD",                     "$$ = {type: 'backward'};" ],
+                   [ "LEFT",                         "$$ = {type: 'left'};" ],
+                   [ "RIGHT",                        "$$ = {type: 'right'};" ],
+                   [ "EAT",                          "$$ = {type: 'eat'};" ],
+                   [ "ATTACK",                       "$$ = {type: 'attack'};" ],
+                   [ "GROW",                         "$$ = {type: 'grow'};" ],
+                   [ "BUD",                          "$$ = {type: 'bud'};" ],
+                   [ "MATE",                         "$$ = {type: 'mate'};" ],
+                   [ "SERVE LBRACKET expr RBRACKET", "$$ = {type: 'serve', expr: $3};" ]],
                 
 
-        "condition": [[]],
+        "condition": [[ "condition OR conjunction",   "$$ = $1.push({type: 'conjunction', relations: $2});" ],
+                      [ "conjunction",                "$$ = [{type: 'conjunction', relations: $1}];" ]],
 
-        "conjunction": [[]],
+        "conjunction": [[ "conjunction OR relation",   "$$ = $1.push($2);" ],
+                        [ "relation",                  "$$ = [$1];" ]],
 
-        "relation": [[]],
-
-        "e" :[[ "e + e",   "$$ = $1 + $3;" ],
-              [ "e - e",   "$$ = $1 - $3;" ],
-              [ "e * e",   "$$ = $1 * $3;" ],
-              [ "e / e",   "$$ = $1 / $3;" ],
-              [ "e ^ e",   "$$ = Math.pow($1, $3);" ],
-              [ "- e",     "$$ = -$2;", {"prec": "UMINUS"} ],
-              [ "( e )",   "$$ = $2;" ],
-              [ "NUMBER",  "$$ = Number(yytext);" ],
-              [ "E",       "$$ = Math.E;" ],
-              [ "PI",      "$$ = Math.PI;" ]],
+        "relation": [[ "expr rel expr",           "$$ = {type: 'relation', class: 'rel', relop: $2, left: $1, right: $2};"],
+                     [ "LBRACE condition RBRACE", "$$ = {type: 'relation', class: 'condition', condition: {type: 'condition', conjunctions: $2}};"]],
 
         "expr": [[]],
 
         "term": [[]],
 
-        "factor": [[ "memexpr",            "$$ = {type: 'factor', class: 'memexpr', expr: $1}"],
-                   [ "LPAREN expr RPAREN", "$$ = {type: 'factor', class: 'expr', expr: $2}"],
-                   [ "MINUS expr",         "$$ = {type: 'factor', class: 'negexpr', expr: $2}"],
-                   [ "sensor",             "$$ = {type: 'factor', class: 'sensor', expr: $1}"],
-                   [ "NUMBER",             "$$ = {type: 'factor', class: 'number', expr: Number(yytext)}"]],
+        "factor": [[ "memexpr",            "$$ = {type: 'factor', class: 'memexpr', expr: $1};"],
+                   [ "LPAREN expr RPAREN", "$$ = {type: 'factor', class: 'expr', expr: $2};"],
+                   [ "MINUS expr",         "$$ = {type: 'factor', class: 'negexpr', expr: $2};"],
+                   [ "sensor",             "$$ = {type: 'factor', class: 'sensor', expr: $1};"],
+                   [ "NUMBER",             "$$ = {type: 'factor', class: 'number', expr: Number(yytext)};"]],
 
-        "sensor": [[ "NEARBY LBRACKET expr RBRACKET", "$$ = {type: 'nearby', expr: $3}" ],
-                   [ "AHEAD LBRACKET expr RBRACKET",  "$$ = {type: 'ahead', expr: $3}" ],
-                   [ "RANDOM LBRACKET expr RBRACKET", "$$ = {type: 'random', expr: $3}" ],
-                   [ "SMELL",                         "$$ = {type: 'smell'}" ]],
+        "sensor": [[ "NEARBY LBRACKET expr RBRACKET", "$$ = {type: 'nearby', expr: $3};" ],
+                   [ "AHEAD LBRACKET expr RBRACKET",  "$$ = {type: 'ahead', expr: $3};" ],
+                   [ "RANDOM LBRACKET expr RBRACKET", "$$ = {type: 'random', expr: $3};" ],
+                   [ "SMELL",                         "$$ = {type: 'smell'};" ]],
 
         "memsugar": [[ "MEMSIZE", "$$ = 'MEMSIZE';" ],
                      [ "DEFENSE", "$$ = 'DEFENSE';" ],
