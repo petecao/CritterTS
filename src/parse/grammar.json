@@ -90,15 +90,17 @@
         "condition": [[ "condition OR conjunction",   "$$ = $1.push({type: 'conjunction', relations: $2});" ],
                       [ "conjunction",                "$$ = [{type: 'conjunction', relations: $1}];" ]],
 
-        "conjunction": [[ "conjunction OR relation",   "$$ = $1.push($2);" ],
+        "conjunction": [[ "conjunction AND relation",   "$$ = $1.push($2);" ],
                         [ "relation",                  "$$ = [$1];" ]],
 
         "relation": [[ "expr rel expr",           "$$ = {type: 'relation', class: 'rel', relop: $2, left: $1, right: $2};"],
                      [ "LBRACE condition RBRACE", "$$ = {type: 'relation', class: 'condition', condition: {type: 'condition', conjunctions: $2}};"]],
 
-        "expr": [[]],
+        "expr": [[ "term addop expr", "$$ = {type: expr, class: $2, left: $1, right: $3};" ],
+                 [ "term",            "$$ = {type: expr, class: 'term', expr: $1};" ]],
 
-        "term": [[]],
+        "term": [[ "factor mulop term", "$$ = {type: term, class: $2, left: $1, right: $3};" ],
+                 [ "factor",            "$$ = {type: term, class: 'factor', expr: $1};" ]],
 
         "factor": [[ "memexpr",            "$$ = {type: 'factor', class: 'memexpr', expr: $1};"],
                    [ "LPAREN expr RPAREN", "$$ = {type: 'factor', class: 'expr', expr: $2};"],
